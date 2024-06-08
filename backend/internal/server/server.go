@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/rs/cors"
+
 	_ "github.com/joho/godotenv/autoload"
 
 	"backend/internal/database"
@@ -34,6 +36,15 @@ func NewServer() *http.Server {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	})
+
+	corsHandler := c.Handler(server.Handler)
+	server.Handler = corsHandler
 
 	return server
 }
